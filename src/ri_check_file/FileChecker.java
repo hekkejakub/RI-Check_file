@@ -59,8 +59,7 @@ class FileChecker {
         for (int i = 0; i < b.length; i++) {
             result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
         }
-        System.out.println(result);
-        System.out.println(checksum);
+
         if (!result.equals(checksum)) {
             System.out.println("Checksum does not match. Current file SHA-1 checksum: " + result);
             System.exit(1);
