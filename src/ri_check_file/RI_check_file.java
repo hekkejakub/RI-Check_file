@@ -24,7 +24,7 @@ public class RI_check_file {
             FileChecker path = new FileChecker(input);
             path.checkpath();
         //    path.getpath();
-            System.out.println("Success");
+            System.out.println("Success, SHA-1 match");
 
         } catch (Exception e) {
             System.out.println("expected 2 parameters; path_to_file/directory checksum");

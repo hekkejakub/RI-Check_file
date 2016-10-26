@@ -5,15 +5,12 @@
  */
 package ri_check_file;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -45,16 +42,29 @@ class FileChecker {
     }
 
     private void checksum() throws NoSuchAlgorithmException, IOException {
+        InputStream imputfile = new FileInputStream(path);
 
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        try (InputStream is = Files.newInputStream(Paths.get(path));
-                DigestInputStream dis = new DigestInputStream(is, md)) {
+        byte[] buffer = new byte[1024];
+        MessageDigest complete = MessageDigest.getInstance("SHA1");
+        int numRead;
+        do {
+            numRead = imputfile.read(buffer);
+            if (numRead > 0) {
+                complete.update(buffer, 0, numRead);
+            }
+        } while (numRead != -1);
+        imputfile.close();
+        byte[] b = complete.digest();
+        String result = "";
+        for (int i = 0; i < b.length; i++) {
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
         }
-        byte[] digest = md.digest();
-        if (!String.valueOf(digest).equals(checksum)){
-            System.out.println("Checksum doesn't match. hash function of file: " + digest);
+        System.out.println(result);
+        System.out.println(checksum);
+        if (!result.equals(checksum)) {
+            System.out.println("Checksum does not match. Current file SHA-1 checksum: " + result);
             System.exit(1);
-        } 
+        }
     }
 
 }
